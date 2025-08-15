@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rose ChatApp 🚀</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Screen 1: Welcome / Login / Register -->
+  <div id="screen1" class="screen active">
+    <h1>Welcome to Rose ChatApp</h1>
+    <button id="btnLogin">Login</button>
+    <button id="btnRegister">Register</button>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <h2>Login</h2>
+      <input type="text" id="loginUser" placeholder="Username">
+      <input type="password" id="loginPass" placeholder="Password">
+      <button id="doLogin">Login</button>
+      <button class="close" data-target="loginModal">Close</button>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div id="registerModal" class="modal">
+    <div class="modal-content">
+      <h2>Register</h2>
+      <input type="text" id="regUser" placeholder="Username">
+      <input type="password" id="regPass" placeholder="Password">
+      <input type="email" id="regEmail" placeholder="Email">
+      <select id="regGender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+      <input type="number" id="regAge" placeholder="Age">
+      <button id="doRegister">Register</button>
+      <button class="close" data-target="registerModal">Close</button>
+    </div>
+  </div>
+
+  <!-- Screen 3: Home Screen -->
+  <div id="homeScreen" class="screen">
+    <header>
+      <h1>Rose ChatApp</h1>
+      <button id="btnProfile">Profile</button>
+    </header>
+    <div class="rooms">
+      <button class="room-btn" data-room="main">Main Room</button>
+      <button class="room-btn" data-room="game">Game Room</button>
+      <button class="room-btn" data-room="event">Event Room</button>
+      <button class="room-btn" data-room="quiz">Quiz Room</button>
+      <button class="room-btn" data-room="singing">Singing Room</button>
+      <button class="room-btn" data-room="staff">Staff Meeting Room</button>
+    </div>
+    <div id="chatArea"></div>
+    <div id="chatInput">
+      <input type="text" id="messageInput" placeholder="Type a message...">
+      <button id="btnEmoji">😊</button>
+      <button id="btnSend">Send</button>
+      <button id="btnRefresh">🔄</button>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div id="profileModal" class="modal">
+    <div class="modal-content">
+      <h2>Your Profile</h2>
+      <div id="profileDisplay">
+        <img id="profileDp" src="dp-placeholder.jpg" alt="Profile DP">
+        <h3 id="profileName">Name</h3>
+        <p id="profileMood">Mood...</p>
+        <p id="profileAbout">About me...</p>
+        <button id="btnEditProfile">Edit Profile</button>
+      </div>
+      <div id="profileEdit" class="hidden">
+        <input type="text" id="editName">
+        <input type="text" id="editMood">
+        <textarea id="editAbout"></textarea>
+        <button id="saveProfile">Save</button>
+      </div>
+      <button class="close" data-target="profileModal">Close</button>
+    </div>
+  </div>
+
+  <!-- Quiz Bot Prompt -->
+  <div id="quizBotModal" class="modal">
+    <div class="modal-content">
+      <h2>Quiz Bot</h2>
+      <div id="quizQuestion">Q. ...</div>
+      <input type="text" id="quizAnswer" placeholder="Your answer">
+      <button id="submitQuiz">Submit</button>
+      <button class="close" data-target="quizBotModal">Close</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.screen {
+  display: none;
+  padding: 20px;
+}
+.screen.active {
+  display: block;
+}
+
+button { padding: 10px; margin: 5px; cursor: pointer; }
+.rooms { display: flex; flex-wrap: wrap; gap: 10px; }
+.room-btn { flex: 1 1 calc(33% - 20px); }
+
+.modal {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center; justify-content: center;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+}
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%; margin: 8px 0;
+  padding: 8px;
+}
+
+.hidden { display: none; }
+
+#chatArea {
+  height: 300px;
+  border: 1px solid #ddd;
+  margin: 10px 0;
+  overflow-y: auto;
+  padding: 10px;
+}
+#chatInput {
+  display: flex;
+  gap: 5px;
+}
+#chatInput input { flex: 1; }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const showModal = id => document.getElementById(id).classList.add('active');
+  const closeModal = id => document.getElementById(id).classList.remove('active');
+  const openScreen = id => {
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  };
+
+  // Screen → Modal navigation
+  document.getElementById('btnLogin').onclick = () => showModal('loginModal');
+  document.getElementById('btnRegister').onclick = () => showModal('registerModal');
+  document.querySelectorAll('.close').forEach(btn =>
+    btn.onclick = () => closeModal(btn.dataset.target)
+  );
+
+  // Do Login / Register
+  document.getElementById('doLogin').onclick = () => {
+    // TODO: validate credentials
+    closeModal('loginModal');
+    openScreen('homeScreen');
+  };
+  document.getElementById('doRegister').onclick = () => {
+    // TODO: validation + store user data
+    closeModal('registerModal');
+    openScreen('homeScreen');
+  };
+
+  // Profile
+  document.getElementById('btnProfile').onclick = () => showModal('profileModal');
+  document.getElementById('btnEditProfile').onclick = () => {
+    document.getElementById('profileDisplay').classList.add('hidden');
+    document.getElementById('profileEdit').classList.remove('hidden');
+  };
+  document.getElementById('saveProfile').onclick = () => {
+    // TODO: save updated user data
+    closeModal('profileModal');
+  };
+
+  // Room switching
+  let currentRoom = null;
+  document.querySelectorAll('.room-btn').forEach(btn => {
+    btn.onclick = () => {
+      currentRoom = btn.dataset.room;
+      document.getElementById('chatArea').innerHTML = `<em>Welcome to ${btn.innerText}!</em>`;
+    };
+  });
+
+  // Chat / Emoji
+  document.getElementById('btnSend').onclick = sendChat;
+  document.getElementById('messageInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') sendChat();
+  });
+  document.getElementById('btnRefresh').onclick = () => {
+    // TODO: fetch latest messages
+  };
+  function sendChat() {
+    const msg = document.getElementById('messageInput').value.trim();
+    if (!msg || !currentRoom) return;
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = `You: ${msg}`;
+    document.getElementById('chatArea').appendChild(msgDiv);
+    document.getElementById('messageInput').value = '';
+  }
+
+  // Quiz Bot Prompt (stub)
+  document.querySelectorAll('.room-btn[data-room="quiz"]').forEach(btn => {
+    btn.onclick = () => {
+      showModal('quizBotModal');
+      document.getElementById('quizQuestion').innerText = 'What is the capital of France?';
+    };
+  });
+  document.getElementById('submitQuiz').onclick = () => {
+    const ans = document.getElementById('quizAnswer').value.trim();
+    alert(ans.toLowerCase() === 'paris' ? '✅ Correct!' : '❌ Try again.');
+  };
+});
